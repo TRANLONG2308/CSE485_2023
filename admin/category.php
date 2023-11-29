@@ -42,6 +42,7 @@
         </nav>
 
     </header>
+
     <main class="container mt-5 mb-5">
         <!-- <h3 class="text-center text-uppercase mb-3 text-primary">CẢM NHẬN VỀ BÀI HÁT</h3> -->
         <div class="row">
@@ -57,46 +58,49 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                           include './connect.php';
+                    <?php
+                        include './connect.php';
 
-                           try {
-                               // Câu lệnh SQL
-                               $sql = "SELECT baiviet.ma_bviet, baiviet.tieude, baiviet.ten_bhat, theloai.ten_tloai
-                                       FROM baiviet
-                                       JOIN theloai ON baiviet.ma_tloai = theloai.ma_tloai
-                                       WHERE theloai.ten_tloai = :ten_tloai";
+                        try {
+                            // Câu lệnh SQL
+                            $sql = "SELECT * FROM theloai";
 
-                               // Chuẩn bị câu lệnh
-                               $stmt = $conn->prepare($sql);
+                            // Chuẩn bị câu lệnh
+                            $stmt = $conn->prepare($sql);
 
-                               // Bắt đầu thực thi và truyền giá trị cho :ten_tloai
-                               $ten_tloai = "Nhạc trữ tình";
-                               $stmt->bindParam(':ten_tloai', $ten_tloai, PDO::PARAM_STR);
+                            // Thực thi câu lệnh
+                            $stmt->execute();
 
-                               // Thực thi câu lệnh
-                               $stmt->execute();
+                            // Hiển thị dữ liệu trong bảng HTML
+                            if ($stmt->rowCount() > 0) {
+                                
 
-                               // Hiển thị dữ liệu trong bảng HTML
-                               if ($stmt->rowCount() > 0) {
-                                   echo "<table>";
-                                   echo "<tr><th>Mã bài viết</th><th>Tiêu đề</th><th>Tên bài hát</th><th>Thể loại</th></tr>";
+                                while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    echo "<tr>
+                                        <td>".$row["ma_tloai"]."</td>
+                                        <td>".$row["ten_tloai"]."</td>
+                                        <td>
+                                            <a href='edit_category.php?id=".$row["ma_tloai"]."'><i class='fa-solid fa-pen-to-square'></i></a>
+                                        </td>
+                                        <td>
+                                            <a href='delete_category.php?id=".$row["ma_tloai"]."'><i class='fa-solid fa-trash'></i></a>
+                                        </td>
+                                    </tr>";
+                                }
+                                
 
-                                   while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                       echo "<tr><td>".$row["ma_bviet"]."</td><td>".$row["tieude"]."</td><td>".$row["ten_bhat"]."</td><td>".$row["ten_tloai"]."</td></tr>";
-                                   }
+ 
+                            } else {
+                                echo "Không có dữ liệu";
+                            }
+                        } catch(PDOException $e) {
+                            echo "Lỗi: " . $e->getMessage();
+                        }
 
-                                   echo "</table>";
-                               } else {
-                                   echo "Không có dữ liệu";
-                               }
-                           } catch(PDOException $e) {
-                               echo "Lỗi: " . $e->getMessage();
-                           }
-
-                           // Đóng kết nối
-                           $conn = null;
+                        // Đóng kết nối
+                        $conn = null;
                         ?>
+
                         <tr>
                             <th scope="row">1</th>
                             <td>Nhạc trữ tình</td>
