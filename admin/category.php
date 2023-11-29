@@ -57,6 +57,46 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php
+                           include './connect.php';
+
+                           try {
+                               // Câu lệnh SQL
+                               $sql = "SELECT baiviet.ma_bviet, baiviet.tieude, baiviet.ten_bhat, theloai.ten_tloai
+                                       FROM baiviet
+                                       JOIN theloai ON baiviet.ma_tloai = theloai.ma_tloai
+                                       WHERE theloai.ten_tloai = :ten_tloai";
+
+                               // Chuẩn bị câu lệnh
+                               $stmt = $conn->prepare($sql);
+
+                               // Bắt đầu thực thi và truyền giá trị cho :ten_tloai
+                               $ten_tloai = "Nhạc trữ tình";
+                               $stmt->bindParam(':ten_tloai', $ten_tloai, PDO::PARAM_STR);
+
+                               // Thực thi câu lệnh
+                               $stmt->execute();
+
+                               // Hiển thị dữ liệu trong bảng HTML
+                               if ($stmt->rowCount() > 0) {
+                                   echo "<table>";
+                                   echo "<tr><th>Mã bài viết</th><th>Tiêu đề</th><th>Tên bài hát</th><th>Thể loại</th></tr>";
+
+                                   while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                       echo "<tr><td>".$row["ma_bviet"]."</td><td>".$row["tieude"]."</td><td>".$row["ten_bhat"]."</td><td>".$row["ten_tloai"]."</td></tr>";
+                                   }
+
+                                   echo "</table>";
+                               } else {
+                                   echo "Không có dữ liệu";
+                               }
+                           } catch(PDOException $e) {
+                               echo "Lỗi: " . $e->getMessage();
+                           }
+
+                           // Đóng kết nối
+                           $conn = null;
+                        ?>
                         <tr>
                             <th scope="row">1</th>
                             <td>Nhạc trữ tình</td>
