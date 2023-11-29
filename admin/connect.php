@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$db = 'booksmanagementsystem';
+$db = 'btth01_cse485';
 $user = 'root';
 $pass = '';
 
